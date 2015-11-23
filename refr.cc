@@ -11,6 +11,8 @@
 #include <fstream>
 using namespace std;
 
+//U KIDIN ME LOL
+
 double PI = 3.14159265359;
 double cspeed = 3.0e8;
 
