@@ -19,7 +19,7 @@ const double n0 = 1.0+ampl*10.0;
 
 
 const double bulkLength = 2.0e2;
-const int discretSize = 1000;
+const int discretSize = 100;
 const int size = int(bulkLength)*discretSize;
 
 
@@ -38,6 +38,8 @@ const double mu0 = 1.26e-6;
 const double kb = 1.38e-23;
 const double T = 300.0;
 const double Eo2 = 1.0e17 / sqrt(eps0/mu0 * (1.0 + alpha*Dens0/eps0) );
+
+double curTime = 0.0;
 
 template <typename T>
     std::string to_string(T value)
@@ -97,15 +99,20 @@ void NormalizeFields (complex<double> * EL_plus,
 					  complex<double> * ER_plus, 
 					  complex<double> * ER_minus)
 {	
+	double omega0 = 2.0*PI*cspeed / lambda0;
+	double omega0 = 2.0*PI*cspeed / lambda1;
+	complex<double> timePhase0 (0.0, omega0 * curTime);
+	complex<double> timePhase1 (0.0, omega1 * curTime);
+
 	for (int i = size; i >= 0; i--)
 	{	
-		*(EL_minus+i) = *(EL_minus+i) / *(EL_plus);
-		*(EL_plus+i) = *(EL_plus+i) / *(EL_plus);
+		*(EL_minus+i) = *(EL_minus+i) / *(EL_plus) / exp(omega0);
+		*(EL_plus+i) = *(EL_plus+i) / *(EL_plus) / exp(omega0);
 	}
 		for (int i = 0; i <= size; i++)
 	{
-		*(ER_plus+i) = *(ER_plus+i) / *(ER_minus+size);
-		*(ER_minus+i) = *(ER_minus+i) / *(ER_minus+size);
+		*(ER_plus+i) = *(ER_plus+i) / *(ER_minus+size) / exp(omega1);
+		*(ER_minus+i) = *(ER_minus+i) / *(ER_minus+size) / exp(omega1);
 	}
 	return;
 }
@@ -300,14 +307,14 @@ int main()
 	complex<double> * ER_minus = new complex<double> [size+1];	// Массив амплитуд волн, которые распространяются справа налево
 	double * E_full = new double [size+1];	// Массив полного поля
 
-	/*int j = 0;
+	int j = 0;
 	bool random = false;
 	set_n(n,0.0,random);
 	CalcFields(n,EL_plus,EL_minus,ER_plus,ER_minus,E_full);
-	PrintResults(j,n,EL_plus,EL_minus,ER_plus,ER_minus,E_full);*/
+	PrintResults(j,n,EL_plus,EL_minus,ER_plus,ER_minus,E_full);
 
 	//Setting 0 iteration medium - no perturbations
-	for (int i = 0; i <= size; i++)
+	/*for (int i = 0; i <= size; i++)
 		*(n+i) = sqrt(1.0 + alpha*Dens0/eps0);
 	
 
@@ -339,7 +346,7 @@ int main()
 		if (j%1000==0)
 			PrintFullDensity(j,Density);
 
-	}
+	}*/
 
 	delete [] EL_plus;
 	delete [] EL_minus;
