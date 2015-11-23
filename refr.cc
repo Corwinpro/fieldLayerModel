@@ -11,33 +11,33 @@
 #include <fstream>
 using namespace std;
 
-double PI = 3.14159265359;
-double cspeed = 3.0e8;
+const double PI = 3.14159265359;
+const double cspeed = 3.0e8;
 
-double ampl = 3.7e-5;
-double n0 = 1.0+ampl*10.0;
-
-
-double bulkLength = 2.0e2;
-int discretSize = 1000;
-int size = int(bulkLength)*discretSize;
+const double ampl = 3.7e-5;
+const double n0 = 1.0+ampl*10.0;
 
 
-double latticeSpeed = 0.0;
+const double bulkLength = 2.0e2;
+const int discretSize = 1000;
+const int size = int(bulkLength)*discretSize;
 
-double lambda0 = 1.0*double(discretSize);
-double k0 = 2.0*PI/lambda0;
 
-double lambda1 = lambda0*(1.0 + 2.0*latticeSpeed/cspeed*n0);
-double k1 = 2.0*PI/lambda1;
+const double latticeSpeed = 0.0;
 
-double alpha = 2.88e-40;
-double Dens0 = 1.98e25;
-double eps0 = 8.85e-12;
-double mu0 = 1.26e-6;
-double kb = 1.38e-23;
-double T = 300.0;
-double Eo2 = 1.0e17 / sqrt(eps0/mu0 * (1.0 + alpha*Dens0/eps0) );
+const double lambda0 = 1.0*double(discretSize);
+const double k0 = 2.0*PI/lambda0;
+
+const double lambda1 = lambda0*(1.0 + 2.0*latticeSpeed/cspeed*n0);
+const double k1 = 2.0*PI/lambda1;
+
+const double alpha = 2.88e-40;
+const double Dens0 = 1.98e25;
+const double eps0 = 8.85e-12;
+const double mu0 = 1.26e-6;
+const double kb = 1.38e-23;
+const double T = 300.0;
+const double Eo2 = 1.0e17 / sqrt(eps0/mu0 * (1.0 + alpha*Dens0/eps0) );
 
 template <typename T>
     std::string to_string(T value)
