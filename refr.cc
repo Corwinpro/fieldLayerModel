@@ -11,8 +11,6 @@
 #include <fstream>
 using namespace std;
 
-//U KIDIN ME LOL
-
 double PI = 3.14159265359;
 double cspeed = 3.0e8;
 
@@ -292,8 +290,6 @@ void ReadDensitFromFile(double * Density)
 }
 int main()
 {
-	//test changes	
-
 	double * n = new double [size + 1];	
 	
 	complex<double> * EL_plus = new complex<double> [size+1]; 	// Массив амплитуд волн, которые распространяются слева направо от левого лазера
