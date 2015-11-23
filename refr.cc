@@ -119,8 +119,10 @@ void CalcFullField (  double * n,
 {
 	
 	for (int i = 0; i <= size; i++){
-		complex<double> phase (0.0, *(n+i)*k0*(double(i)-double(size)/2.0));
-		*(E_full+i) = pow(abs( exp(phase) * (*(EL_plus+i) + *(ER_plus+i)) + exp(-phase)*( *(EL_minus+i) + *(ER_minus+i)) ) , 2.0);
+		complex<double> phase0 (0.0, *(n+i)*k0*(double(i)-double(size)/2.0));
+		complex<double> phase1 (0.0, *(n+i)*k1*(double(i)-double(size)/2.0));
+
+		*(E_full+i) = pow(abs( *(EL_plus+i)*exp(phase0) + *(ER_plus+i) * exp(phase1) + *(EL_minus+i)*exp(-phase0)  + *(ER_minus+i)*exp(-phase1) ) , 2.0);
 	}
 
 	return;
