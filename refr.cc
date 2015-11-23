@@ -290,6 +290,8 @@ void ReadDensitFromFile(double * Density)
 }
 int main()
 {
+	//test changes	
+
 	double * n = new double [size + 1];	
 	
 	complex<double> * EL_plus = new complex<double> [size+1]; 	// Массив амплитуд волн, которые распространяются слева направо от левого лазера
