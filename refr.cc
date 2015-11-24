@@ -23,7 +23,7 @@ const int discretSize = 100;
 const int size = int(bulkLength)*discretSize;
 
 
-const double latticeSpeed = 0.0;
+const double latticeSpeed = 300.0;
 
 const double lambda0 = 1.0*double(discretSize);
 const double k0 = 2.0*PI/lambda0;
@@ -39,8 +39,7 @@ const double kb = 1.38e-23;
 const double T = 300.0;
 const double Eo2 = 1.0e17 / sqrt(eps0/mu0 * (1.0 + alpha*Dens0/eps0) );
 
-double curTime = 0.0;
-
+double curTime = 5.0e-12 / 5.32e-9; //dx = 5.32e-9
 template <typename T>
     std::string to_string(T value)
     {
@@ -124,14 +123,16 @@ void CalcFullField (  double * n,
 {
 	double omega0 = 2.0*PI*cspeed / lambda0;
 	double omega1 = 2.0*PI*cspeed / lambda1;
+
+	//cout << omega1 / (5.32e-9) << endl;
 	complex<double> timePhase0 (0.0, omega0 * curTime);
 	complex<double> timePhase1 (0.0, omega1 * curTime);
 	
 	for (int i = 0; i <= size; i++){
-		complex<double> phase0 (0.0, *(n+i)*k0*(double(i)-double(size)/2.0));
-		complex<double> phase1 (0.0, *(n+i)*k1*(double(i)-double(size)/2.0));
+		complex<double> spatPhase0 (0.0, *(n+i)*k0*(double(i)-double(size)/2.0));
+		complex<double> spatPhase1 (0.0, *(n+i)*k1*(double(i)-double(size)/2.0));
 
-		*(E_full+i) = pow(abs( *(EL_plus+i)*exp(phase0-omega0) + *(ER_plus+i) * exp(phase1-omega1) + *(EL_minus+i)*exp(-phase0-omega0)  + *(ER_minus+i)*exp(-phase1-omega1) ) , 2.0);
+		*(E_full+i) = 0.5 * pow(abs( *(EL_plus+i)*exp(spatPhase0-timePhase0) + *(ER_plus+i) * exp(spatPhase1-timePhase1) + *(EL_minus+i)*exp(-spatPhase0-timePhase0)  + *(ER_minus+i)*exp(-spatPhase1-timePhase1) ) , 2.0);
 	}
 
 	return;
@@ -238,7 +239,7 @@ void PrintResults ( int j,
 	//complex<double> phase (0.0, *(n+i)*k0*(double(i)-double(size)/2.0));
 	//Efield = pow(abs( exp(phase) * (*(EL_plus+i) + *(ER_plus+i)) + exp(-phase)*( *(EL_minus+i) + *(ER_minus+i)) ) , 2.0); */
 
-	for (int i = 1; i <= size; i++)
+	for (int i = 0; i <= size; i++)
 		{
 			//if ( *(E_full+i) > *(E_full+i+1) && *(E_full+i) > *(E_full+i-1))
 				fprintf(file_Efull, "%e %e %e %e\n", double(i)/lambda0, abs (*(EL_plus+i) + (*(ER_plus+i)) ), abs( *(EL_minus+i) + (*(ER_minus+i))), *(E_full+i) );
@@ -260,7 +261,7 @@ double CalcAveragePotent(double * E_full)
 {
 	double Average = 0.0;
 	for (int i = 0; i <= size; i++)
-		Average += exp( *(E_full+i) * alpha*Eo2/(4.0*kb*T) );
+		Average += exp( *(E_full+i) * alpha*Eo2/(2.0*kb*T) );
 
 	return Average / double(size+1);
 }
@@ -339,7 +340,7 @@ int main()
 
 		for (int i = 0; i<=size; i++)
 		{
-			*(Density+i) =  *(Density+i)*0.999 + 0.001 * Dens0 * exp( *(E_full+i) * alpha*Eo2/(4.0*kb*T))/ PotentAverage;
+			*(Density+i) =  *(Density+i)*0.999 + 0.001 * Dens0 * exp( *(E_full+i) * alpha*Eo2/(2.0*kb*T))/ PotentAverage;
 			*(n+i) = sqrt( 1.0 + *(Density+i)*alpha/eps0) ;
 		}
 
