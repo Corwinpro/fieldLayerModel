@@ -94,29 +94,27 @@ void set_n (double * n,
 	return;
 }
 
+// Normalize Fields: Set initial amplitude to (1;0)
 void NormalizeFields (complex<double> * EL_plus, 
 					  complex<double> * EL_minus, 
 					  complex<double> * ER_plus, 
 					  complex<double> * ER_minus)
 {	
-	double omega0 = 2.0*PI*cspeed / lambda0;
-	double omega0 = 2.0*PI*cspeed / lambda1;
-	complex<double> timePhase0 (0.0, omega0 * curTime);
-	complex<double> timePhase1 (0.0, omega1 * curTime);
 
 	for (int i = size; i >= 0; i--)
 	{	
-		*(EL_minus+i) = *(EL_minus+i) / *(EL_plus) / exp(omega0);
-		*(EL_plus+i) = *(EL_plus+i) / *(EL_plus) / exp(omega0);
+		*(EL_minus+i) = *(EL_minus+i) / *(EL_plus);
+		*(EL_plus+i) = *(EL_plus+i) / *(EL_plus);
 	}
 		for (int i = 0; i <= size; i++)
 	{
-		*(ER_plus+i) = *(ER_plus+i) / *(ER_minus+size) / exp(omega1);
-		*(ER_minus+i) = *(ER_minus+i) / *(ER_minus+size) / exp(omega1);
+		*(ER_plus+i) = *(ER_plus+i) / *(ER_minus+size);
+		*(ER_minus+i) = *(ER_minus+i) / *(ER_minus+size);
 	}
 	return;
 }
 
+// Calc <E^2> with temporary exp(-iwt) and spatial exp(+-ikx) dependencies
 void CalcFullField (  double * n,
 					  complex<double> * EL_plus, 
 					  complex<double> * EL_minus, 
@@ -124,12 +122,16 @@ void CalcFullField (  double * n,
 					  complex<double> * ER_minus,
 					  double * E_full)
 {
+	double omega0 = 2.0*PI*cspeed / lambda0;
+	double omega1 = 2.0*PI*cspeed / lambda1;
+	complex<double> timePhase0 (0.0, omega0 * curTime);
+	complex<double> timePhase1 (0.0, omega1 * curTime);
 	
 	for (int i = 0; i <= size; i++){
 		complex<double> phase0 (0.0, *(n+i)*k0*(double(i)-double(size)/2.0));
 		complex<double> phase1 (0.0, *(n+i)*k1*(double(i)-double(size)/2.0));
 
-		*(E_full+i) = pow(abs( *(EL_plus+i)*exp(phase0) + *(ER_plus+i) * exp(phase1) + *(EL_minus+i)*exp(-phase0)  + *(ER_minus+i)*exp(-phase1) ) , 2.0);
+		*(E_full+i) = pow(abs( *(EL_plus+i)*exp(phase0-omega0) + *(ER_plus+i) * exp(phase1-omega1) + *(EL_minus+i)*exp(-phase0-omega0)  + *(ER_minus+i)*exp(-phase1-omega1) ) , 2.0);
 	}
 
 	return;
